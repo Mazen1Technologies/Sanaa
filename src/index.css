@@ -586,3 +586,33 @@
   0%, 70%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
   82% { opacity: 1; transform: scale(1.2) rotate(45deg); }
 }
+
+.typing-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 9999px;
+  background: rgba(253, 230, 138, 0.8);
+  animation: typing-bounce 1s ease-in-out infinite;
+}
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+.anim-bubble-in {
+  animation: bubble-in 0.35s ease-out both;
+}
+@keyframes bubble-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.anim-emoji-float {
+  opacity: 0;
+  animation: emoji-float 2.4s ease-out forwards;
+}
+@keyframes emoji-float {
+  0% { opacity: 0; transform: translate(0, 20px) scale(0.4); }
+  15% { opacity: 1; transform: translate(0, 0) scale(1.2); }
+  100% { opacity: 0; transform: translate(var(--drift, 0), -260px) scale(1); }
+}
