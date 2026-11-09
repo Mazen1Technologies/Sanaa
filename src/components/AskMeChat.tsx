@@ -40,7 +40,7 @@ const MOOD_FACES: Record<Mood, string[]> = {
   calm: ['🤍', '🕊️', '🌹'],
 };
 
-const SUGGESTIONS = ['كيف حالك؟ 🤍', 'أنا تعبانة اليوم 🥺', 'اشتقت لك 🥹', 'وش أطبخ اليوم؟', 'ساعدني بشيء'];
+const SUGGESTIONS = ['كيف حالك؟ 🤍', 'أنا تعبانة اليوم 🥺', 'وش أطبخ اليوم؟', 'ساعدني بشيء'];
 
 const WELCOME: ChatMessage = {
   id: 'welcome',
@@ -267,7 +267,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
             }}
             rows={1}
             maxLength={1500}
-            placeholder="اكتبي لي أي شيء يا جميلتي…"
+            placeholder="فضفضي يا سونا، أنا بمساعدتك…"
             className="max-h-32 min-h-[2.75rem] flex-1 resize-none rounded-3xl border border-amber-300/30 bg-[#1a0c10] px-4 py-2.5 text-base text-amber-50 placeholder:text-amber-100/40 focus:border-amber-200 focus:outline-none"
           />
           <button
