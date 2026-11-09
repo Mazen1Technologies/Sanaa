@@ -13,18 +13,31 @@ import {
   type Category,
   type Dress,
 } from '@/lib/dresses';
+import { BUNDLED_DRESSES } from '@/lib/closetImages';
 
 const ALL = 'الكل';
 const FAVORITES = 'المفضلة';
+const BUNDLED_FAVORITES_KEY = 'sanaa-closet-bundled-favorites';
 type Filter = typeof ALL | typeof FAVORITES | Category;
+
+function getBundledFavorites() {
+  const stored = window.localStorage.getItem(BUNDLED_FAVORITES_KEY);
+  if (!stored) return new Set<string>();
+
+  const parsed: unknown = JSON.parse(stored);
+  if (!Array.isArray(parsed) || parsed.some((key) => typeof key !== 'string')) {
+    throw new Error('تعذّر قراءة المفضلة للصور المضافة إلى الموقع');
+  }
+  return new Set(parsed);
+}
 
 interface ClosetProps {
   onBack: () => void;
 }
 
 export default function Closet({ onBack }: ClosetProps) {
-  const [dresses, setDresses] = useState<Dress[]>([]);
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [dresses, setDresses] = useState<Dress[]>(BUNDLED_DRESSES);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('ready');
   const [filter, setFilter] = useState<Filter>(ALL);
   const [isAdding, setIsAdding] = useState(false);
   const [addingCategory, setAddingCategory] = useState<Category>('سهرة');
@@ -34,14 +47,29 @@ export default function Closet({ onBack }: ClosetProps) {
 
   useEffect(() => {
     let active = true;
-    setStatus('loading');
+    let bundledDresses = BUNDLED_DRESSES;
+    try {
+      const favorites = getBundledFavorites();
+      bundledDresses = BUNDLED_DRESSES.map((dress) => ({
+        ...dress,
+        liked: favorites.has(dress.staticKey ?? ''),
+      }));
+      setDresses(bundledDresses);
+    } catch {
+      setActionError('تعذّر استعادة مفضلة الصور المضافة إلى الموقع.');
+    }
+
     fetchDresses()
       .then((rows) => {
         if (!active) return;
-        setDresses(rows);
+        setDresses([...rows, ...bundledDresses]);
         setStatus('ready');
       })
-      .catch(() => active && setStatus('error'));
+      .catch(() => {
+        if (!active) return;
+        setStatus('ready');
+        setActionError('تعذّر تحميل الصور المحفوظة من الخزانة، لكن الصور المرفقة بالموقع ما زالت ظاهرة.');
+      });
     return () => {
       active = false;
     };
@@ -74,6 +102,19 @@ export default function Closet({ onBack }: ClosetProps) {
 
   const toggleLike = useCallback(async (dress: Dress) => {
     const liked = !dress.liked;
+    if (dress.staticKey) {
+      try {
+        const favorites = getBundledFavorites();
+        if (liked) favorites.add(dress.staticKey);
+        else favorites.delete(dress.staticKey);
+        window.localStorage.setItem(BUNDLED_FAVORITES_KEY, JSON.stringify([...favorites]));
+        setDresses((list) => list.map((item) => (item.id === dress.id ? { ...item, liked } : item)));
+      } catch {
+        setActionError('تعذّر حفظ المفضلة على هذا الجهاز.');
+      }
+      return;
+    }
+
     setDresses((list) => list.map((item) => (item.id === dress.id ? { ...item, liked } : item)));
     try {
       await setDressLiked(dress.id, liked);
@@ -85,6 +126,10 @@ export default function Closet({ onBack }: ClosetProps) {
 
   const removeDress = useCallback(
     async (dress: Dress) => {
+      if (dress.staticKey) {
+        setActionError('هذه الصور مضمّنة مع الموقع ولا يمكن حذفها من الخزانة.');
+        return;
+      }
       try {
         await deleteDress(dress.id);
         const remaining = visible.length - 1;

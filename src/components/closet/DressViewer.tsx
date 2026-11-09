@@ -255,29 +255,30 @@ export default function DressViewer({
             {dress.liked ? 'في المفضلة' : 'أعجبني'}
           </button>
 
-          {confirmDelete ? (
-            <span className="flex items-center gap-2 text-sm">
+          {!dress.staticKey &&
+            (confirmDelete ? (
+              <span className="flex items-center gap-2 text-sm">
+                <button
+                  type="button"
+                  onClick={() => onDelete(dress)}
+                  className="rounded-full bg-rose-700 px-4 py-2.5 text-white"
+                >
+                  حذف نهائياً
+                </button>
+                <button type="button" onClick={() => setConfirmDelete(false)} className="px-2 text-amber-100/70">
+                  إلغاء
+                </button>
+              </span>
+            ) : (
               <button
                 type="button"
-                onClick={() => onDelete(dress)}
-                className="rounded-full bg-rose-700 px-4 py-2.5 text-white"
+                onClick={() => setConfirmDelete(true)}
+                aria-label="حذف الفستان"
+                className="flex h-11 w-11 items-center justify-center rounded-full text-amber-100/40 transition hover:bg-rose-900/40 hover:text-rose-300"
               >
-                حذف نهائياً
+                <Trash2 className="h-5 w-5" />
               </button>
-              <button type="button" onClick={() => setConfirmDelete(false)} className="px-2 text-amber-100/70">
-                إلغاء
-              </button>
-            </span>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setConfirmDelete(true)}
-              aria-label="حذف الفستان"
-              className="flex h-11 w-11 items-center justify-center rounded-full text-amber-100/40 transition hover:bg-rose-900/40 hover:text-rose-300"
-            >
-              <Trash2 className="h-5 w-5" />
-            </button>
-          )}
+            ))}
         </div>
       </div>
     </div>

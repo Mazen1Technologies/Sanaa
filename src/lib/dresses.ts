@@ -10,6 +10,7 @@ export interface Dress {
   liked: boolean;
   imageUrl: string;
   createdAt: string;
+  staticKey?: string;
 }
 
 async function ensureOk(response: Response) {
