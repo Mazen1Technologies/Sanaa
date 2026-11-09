@@ -1,4 +1,5 @@
 import { useEffect, useState, type MouseEvent } from 'react';
+import AskMeChat from '@/components/AskMeChat';
 import BloomingRose from '@/components/BloomingRose';
 import Closet from '@/components/closet/Closet';
 import WardrobeIcon from '@/components/WardrobeIcon';
@@ -78,6 +79,8 @@ function App() {
         <WardrobeIcon className="h-11 w-11 drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" />
         <span className="font-arabic text-lg">خزانة Sanaa</span>
       </a>
+
+      <AskMeChat />
 
       <div className="relative z-10 mt-6 w-full px-2">
         <DailyMessage />
